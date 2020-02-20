@@ -3,8 +3,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.chooloo.www.callmanager"
-        minSdkVersion 23
+        applicationId 'co.kwest.www.callmanager'
+        minSdkVersion 28
         targetSdkVersion 28
         versionCode 32
         versionName "v0.3.4"

@@ -40,7 +40,6 @@
     <string-array name="pref_default_page_entries">
         <item>Recents</item>
         <item>Contacts</item>
-        <item>Excel</item>
     </string-array>
 
     <string-array name="pref_default_page_entry_values">
