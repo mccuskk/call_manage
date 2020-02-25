@@ -1,10 +1,12 @@
 package co.kwest.www.callmanager.ui.activity;
 
 import android.app.KeyguardManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.PowerManager;
 import android.telecom.Call;
 import android.view.KeyEvent;
@@ -17,6 +19,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,6 +34,7 @@ import co.kwest.www.callmanager.util.CallManager;
 import co.kwest.www.callmanager.util.PreferenceUtils;
 import co.kwest.www.callmanager.util.ThemeUtils;
 import co.kwest.www.callmanager.util.Utilities;
+import co.kwest.www.callmanager.viewmodels.SharedDialViewModel;
 import timber.log.Timber;
 
 import static co.kwest.www.callmanager.util.BiometricUtils.showBiometricPrompt;
@@ -39,8 +46,25 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
 
   Callback mCallback = new Callback();
 
+  private BroadcastReceiver broadcastReceiver;
+
+  // ViewModels
+  private SharedDialViewModel mSharedDialViewModel;
+
+  // BottomSheet
+  BottomSheetBehavior mBottomSheetBehavior;
+
+  //  Current states
+  boolean mIsCallingUI = false;
+  boolean mIsCreatingUI = true;
+
   @BindView(R.id.text_status) TextView mStatusText;
   @BindView(R.id.text_caller) TextView mCallerText;
+
+  // Action buttons
+  @BindView(R.id.answer_btn)
+  FloatingActionButton mAnswerButton;
+
 
   // Image Views
   @BindView(R.id.image_placeholder)
@@ -59,6 +83,8 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
     setContentView(R.layout.ongoing_call);
     PreferenceUtils.getInstance(this);
     Utilities.setUpLocale(this);
+
+    registerReceiver();
 
     ButterKnife.bind(this);
 
@@ -84,6 +110,24 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
     powerManager = (PowerManager) getSystemService(POWER_SERVICE);
     wakeLock = powerManager.newWakeLock(field, getLocalClassName());
 
+    // Instantiate ViewModels
+    mSharedDialViewModel = ViewModelProviders.of(this).get(SharedDialViewModel.class);
+    mSharedDialViewModel.getNumber().observe(this, s -> {
+      if (s != null && !s.isEmpty()) {
+        char c = s.charAt(s.length() - 1);
+        CallManager.keypad(c);
+      }
+    });
+  }
+
+  private void registerReceiver() {
+    broadcastReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        endCall();
+      }
+    };
+    registerReceiver(broadcastReceiver, new IntentFilter("co.kwest.www.callmanager.hangup"));
   }
 
   @Override
@@ -125,6 +169,10 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
     endCall();
   }
 
+  @OnClick(R.id.answer_btn)
+  public void answer(View view) {
+    CallManager.answer();
+  }
 
   private void endCall() {
     //mCallTimeHandler.sendEmptyMessage(TIME_STOP);
@@ -189,11 +237,23 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
     }
 
     mStatusText.setText(statusTextRes);
-    //if (state != Call.STATE_RINGING && state != Call.STATE_DISCONNECTED) switchToCallingUI();
+    if (state != Call.STATE_RINGING && state != Call.STATE_DISCONNECTED) switchToCallingUI();
     if (state == Call.STATE_DISCONNECTED) endCall();
     //mState = state;
     //mStateText = getString(statusTextRes);
   }
+
+  /**
+   * Switches the ui to an active call ui.
+   */
+  private void switchToCallingUI() {
+    if (mIsCallingUI) return;
+    else mIsCallingUI = true;
+
+    // Change the buttons layout
+    mAnswerButton.hide();
+  }
+
 
   // -- Wake Lock -- //
 
