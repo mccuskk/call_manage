@@ -718,7 +718,7 @@ public class MainActivity extends AbsSearchBarActivity {
         CHARACTERISTIC_USER_DESCRIPTION_UUID,
         (BluetoothGattDescriptor.PERMISSION_READ | BluetoothGattDescriptor.PERMISSION_WRITE));
     try {
-      descriptor.setValue(defaultValue.getBytes("UTF-8"));
+      descriptor.setValue(defaultValue.getBytes(StandardCharsets.UTF_8));
     } finally {
       return descriptor;
     }

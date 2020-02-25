@@ -193,7 +193,7 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
     // Display the information about the caller
     Contact callerContact = CallManager.getDisplayContact(this);
     if (!callerContact.getName().isEmpty()) {
-      if (callerContact.getName() != null) mCallerText.setText(callerContact.getName());
+      mCallerText.setText(callerContact.getName());
       if (callerContact.getPhotoUri() != null) {
         mPlaceholderImage.setVisibility(View.INVISIBLE);
         mPhotoImage.setVisibility(View.VISIBLE);
