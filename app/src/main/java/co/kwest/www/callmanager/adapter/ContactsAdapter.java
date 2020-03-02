@@ -90,6 +90,10 @@ public class ContactsAdapter extends AbsFastScrollerAdapter<ContactsAdapter.Cont
     public void changeCursor(Cursor cursor) {
         super.changeCursor(cursor);
 
+        if (cursor == null) {
+            return;
+        }
+
         String[] tempHeaders = cursor.getExtras().getStringArray(ContactsContract.Contacts.EXTRA_ADDRESS_BOOK_INDEX_TITLES);
         int[] tempCounts = cursor.getExtras().getIntArray(ContactsContract.Contacts.EXTRA_ADDRESS_BOOK_INDEX_COUNTS);
 

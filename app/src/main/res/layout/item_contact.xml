@@ -35,7 +35,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:scaleType="fitCenter"
-            android:tint="?attr/secondaryAccentColor"
+            android:tint="#4c7248"
             app:srcCompat="@drawable/ic_account_circle_black_24dp" />
 
         <de.hdodenhof.circleimageview.CircleImageView
