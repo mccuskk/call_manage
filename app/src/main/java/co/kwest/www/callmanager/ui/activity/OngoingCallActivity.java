@@ -191,8 +191,14 @@ public class OngoingCallActivity extends AbsThemeActivity implements DialpadFrag
 
         // This activity needs to show even if the screen is off or locked
         Window window = getWindow();
-        setShowWhenLocked(true);
-        setTurnScreenOn(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        } else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        }
 
         KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         if (km != null) {

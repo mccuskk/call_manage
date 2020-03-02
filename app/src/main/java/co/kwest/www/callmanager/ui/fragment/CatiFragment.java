@@ -1,16 +1,18 @@
 package co.kwest.www.callmanager.ui.fragment;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import butterknife.BindView;
 import co.kwest.www.callmanager.R;
 import co.kwest.www.callmanager.adapter.CatiAdapter;
 import co.kwest.www.callmanager.adapter.listener.OnItemClickListener;
@@ -34,6 +36,7 @@ public class CatiFragment extends AbsRecyclerViewFragment implements
   private LinearLayoutManager mLayoutManager;
   private CatiAdapter mAdapter;
 
+  @BindView(R.id.serial_no) TextView mSerialNo;
 
   public CatiFragment() {
     // Required empty public constructor
@@ -51,6 +54,8 @@ public class CatiFragment extends AbsRecyclerViewFragment implements
     mRecyclerView.setLayoutManager(mLayoutManager);
     mAdapter = new CatiAdapter(getContext(), this);
     mRecyclerView.setAdapter(mAdapter);
+
+    mSerialNo.setText(Build.getSerial());
   }
 
   @Override

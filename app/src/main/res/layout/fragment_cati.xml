@@ -18,10 +18,17 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <!-- TODO: Update blank fragment layout -->
+
+    <!-- Serial Number -->
     <TextView
+        android:id="@+id/serial_no"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:paddingTop="64sp"
+        android:text="@string/serial_no"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="48sp"
+        android:textStyle="bold" />
 
 </FrameLayout>
