@@ -98,61 +98,32 @@ public class MainActivity extends AbsSearchBarActivity {
   private static final UUID CLIENT_CHARACTERISTIC_CONFIGURATION_UUID = UUID
       .fromString("00002902-0000-1000-8000-00805f9b34fb");
 
-  private static final UUID HEART_RATE_SERVICE_UUID = UUID
+  private static final UUID DIALER_SERVICE_UUID = UUID
       .fromString("00001234-0000-1000-8000-00805f9b34fb");
 
-  private static final UUID HEART_RATE_MEASUREMENT_UUID = UUID
-      .fromString("00002A37-0000-1000-8000-00805f9b34fb");
-
-  private static final UUID HEART_RATE_CONTROL_POINT_UUID = UUID
+  private static final UUID DIALER_CONTROL_POINT_UUID = UUID
       .fromString("00000000-0000-1000-8000-00805f9b34fb");
 
-  private static final int HEART_RATE_MEASUREMENT_VALUE_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT8;
-  private static final int INITIAL_HEART_RATE_MEASUREMENT_VALUE = 60;
-  private static final int EXPENDED_ENERGY_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT16;
-  private static final int INITIAL_EXPENDED_ENERGY = 0;
-  private static final String HEART_RATE_MEASUREMENT_DESCRIPTION = "Used to send a heart rate " +
-      "measurement";
-
-
-  private BluetoothGattService mHeartRateService;
-  private BluetoothGattCharacteristic mHeartRateMeasurementCharacteristic;
-  private BluetoothGattCharacteristic mHeartRateControlPoint;
-
-  public BluetoothGattService getBluetoothGattService() {
-    return mHeartRateService;
-  }
+  private BluetoothGattService mDialerService;
+  private BluetoothGattCharacteristic mDialerControlPoint;
 
   public void startBluetoothService() {
-    mHeartRateMeasurementCharacteristic =
-        new BluetoothGattCharacteristic(HEART_RATE_MEASUREMENT_UUID,
-            BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-            /* No permissions */ 0);
 
-    mHeartRateMeasurementCharacteristic.addDescriptor(
-        getClientCharacteristicConfigurationDescriptor());
-
-    mHeartRateMeasurementCharacteristic.addDescriptor(
-        getCharacteristicUserDescriptionDescriptor(HEART_RATE_MEASUREMENT_DESCRIPTION));
-
-    mHeartRateControlPoint =
-        new BluetoothGattCharacteristic(HEART_RATE_CONTROL_POINT_UUID,
+    mDialerControlPoint =
+        new BluetoothGattCharacteristic(DIALER_CONTROL_POINT_UUID,
             BluetoothGattCharacteristic.PROPERTY_WRITE,
             BluetoothGattCharacteristic.PERMISSION_WRITE);
 
-    mHeartRateService = new BluetoothGattService(HEART_RATE_SERVICE_UUID,
+    mDialerService = new BluetoothGattService(DIALER_SERVICE_UUID,
         BluetoothGattService.SERVICE_TYPE_PRIMARY);
-    mHeartRateService.addCharacteristic(mHeartRateMeasurementCharacteristic);
-    mHeartRateService.addCharacteristic(mHeartRateControlPoint);
+    mDialerService.addCharacteristic(mDialerControlPoint);
   }
 
 
   public ParcelUuid getServiceUUID() {
-    return new ParcelUuid(HEART_RATE_SERVICE_UUID);
+    return new ParcelUuid(DIALER_SERVICE_UUID);
   }
 
-
-  private BluetoothGattService mBluetoothGattService;
   private HashSet<BluetoothDevice> mBluetoothDevices;
   private BluetoothManager mBluetoothManager;
   private BluetoothAdapter mBluetoothAdapter;
@@ -163,7 +134,7 @@ public class MainActivity extends AbsSearchBarActivity {
       .build();
   private AdvertiseData mAdvData = new AdvertiseData.Builder()
       .setIncludeTxPowerLevel(true)
-      .addServiceUuid(new ParcelUuid(HEART_RATE_SERVICE_UUID))
+      .addServiceUuid(new ParcelUuid(DIALER_SERVICE_UUID))
       .build();
   private AdvertiseData mAdvScanResponse = new AdvertiseData.Builder()
       .setIncludeDeviceName(true)
@@ -464,7 +435,7 @@ public class MainActivity extends AbsSearchBarActivity {
     // are present by default).
     startBluetoothService();
 
-    mGattServer.addService(mHeartRateService);
+    mGattServer.addService(mDialerService);
 
     if (mBluetoothAdapter.isMultipleAdvertisementSupported()) {
       mAdvertiser = mBluetoothAdapter.getBluetoothLeAdvertiser();
