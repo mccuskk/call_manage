@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.telecom.Call;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -42,6 +43,7 @@ import static co.kwest.www.callmanager.util.BiometricUtils.showBiometricPrompt;
 
 public class OngoingActivity extends AbsThemeActivity implements DialpadFragment.OnKeyDownListener {
 
+  private static final String TAG = OngoingActivity.class.getCanonicalName();
   private static int mState;
   private static String mStateText;
 
@@ -155,6 +157,8 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
   @Override
   protected void onDestroy() {
     super.onDestroy();
+
+    unregisterReceiver(broadcastReceiver);
     CallManager.unregisterCallback(mCallback); //The activity is gone, no need to listen to changes
   }
 
@@ -183,6 +187,8 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
 
   private void endCall() {
     //mCallTimeHandler.sendEmptyMessage(TIME_STOP);
+    Log.v(TAG, "endCall");
+
     CallManager.reject();
     releaseWakeLock();
     //if (CallManager.isAutoCalling()) {
@@ -221,6 +227,9 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
     switch (state) {
       case Call.STATE_ACTIVE: // Ongoing
         statusTextRes = R.string.status_call_active;
+        Intent intent = new Intent();
+        intent.setAction("co.kwest.www.callmanager.answered");
+        sendBroadcast(intent);
         break;
       case Call.STATE_DISCONNECTED: // Ended
         statusTextRes = R.string.status_call_disconnected;

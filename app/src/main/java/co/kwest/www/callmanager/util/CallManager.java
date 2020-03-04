@@ -29,6 +29,8 @@ public class CallManager {
     private static int sAutoCallPosition = 0;
     private static SubscriptionManager mSubscriptionManager;
 
+    public static String called;
+
     // -- Call Actions -- //
 
     /**
@@ -38,6 +40,9 @@ public class CallManager {
      * @param number
      */
     public static void call(@NotNull Context context, @NotNull String number) {
+
+        called = number;
+
         Timber.i("Trying to call: %s", number);
         String uri;
         try {
