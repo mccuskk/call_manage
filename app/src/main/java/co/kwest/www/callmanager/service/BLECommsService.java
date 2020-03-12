@@ -35,9 +35,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import co.kwest.www.callmanager.R;
 import co.kwest.www.callmanager.ui.activity.MainActivity;
 import co.kwest.www.callmanager.util.CallManager;
 import timber.log.Timber;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class BLECommsService extends Service {
   public static final String CHANNEL_ID = "ForegroundServiceChannel";
@@ -149,24 +152,22 @@ public class BLECommsService extends Service {
     public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId,
                                              BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded,
                                              int offset, byte[] value) {
-      //super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite,
-      //    responseNeeded, offset, value);
-      //int status = mCurrentServiceFragment.writeCharacteristic(characteristic, offset, value);
 
-      String phoneNumber = new String(value, 0, value.length, StandardCharsets.UTF_8);
-      Log.v(TAG, "Characteristic Write request: " + phoneNumber);
+      if (characteristic.getUuid() == DIAL_NUMBER_UUID) {
+        String phoneNumber = new String(value, 0, value.length, StandardCharsets.UTF_8);
+        Log.v(TAG, "Characteristic Write request: " + phoneNumber);
 
-      Intent intent = new Intent();
+        Intent intent = new Intent();
 
-      if (phoneNumber.equals("hangup")) {
-        intent.setAction("co.kwest.www.callmanager.hangup");
+        if (phoneNumber.equals("hangup")) {
+          intent.setAction("co.kwest.www.callmanager.hangup");
+          sendBroadcast(intent);
+        } else {
+          intent.setAction("co.kwest.www.callmanager.dial");
+          intent.putExtra("dial", phoneNumber);
+        }
         sendBroadcast(intent);
       }
-      else {
-        intent.setAction("co.kwest.www.callmanager.dial");
-        intent.putExtra("dial", phoneNumber);
-      }
-      sendBroadcast(intent);
 
       if (responseNeeded) {
         mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
@@ -198,7 +199,7 @@ public class BLECommsService extends Service {
       super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded,
           offset, value);
       Log.v(TAG, "Descriptor Write Request " + descriptor.getUuid() + " " + Arrays.toString(value));
-      int status = BluetoothGatt.GATT_SUCCESS;
+      int status;
       if (descriptor.getUuid() == CLIENT_CHARACTERISTIC_CONFIGURATION_UUID) {
         BluetoothGattCharacteristic characteristic = descriptor.getCharacteristic();
         boolean supportsNotifications = (characteristic.getProperties() &
@@ -258,14 +259,14 @@ public class BLECommsService extends Service {
   }
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    String input = intent.getStringExtra("inputExtra");
     createNotificationChannel();
     Intent notificationIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this,
         0, notificationIntent, 0);
     Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-        .setContentTitle("Foreground Service")
-        .setContentText(input)
+        .setContentTitle("Bluetooth Dialer Service")
+        .setContentText("Support service for Kwest CATI")
+        .setSmallIcon(R.drawable.ic_dialer_service)
         .setContentIntent(pendingIntent)
         .build();
     startForeground(1, notification);
@@ -384,6 +385,7 @@ public class BLECommsService extends Service {
     } else if (!mBluetoothAdapter.isEnabled()) {
       // Make sure bluetooth is enabled.
       Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+      enableBtIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
       startActivity(enableBtIntent);
     }
   }

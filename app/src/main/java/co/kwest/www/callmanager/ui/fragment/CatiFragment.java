@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,7 +37,8 @@ public class CatiFragment extends AbsRecyclerViewFragment implements
   private LinearLayoutManager mLayoutManager;
   private CatiAdapter mAdapter;
 
-  @BindView(R.id.serial_no) TextView mSerialNo;
+  @BindView(R.id.serial_no)
+  TextView mSerialNo;
 
   public CatiFragment() {
     // Required empty public constructor
@@ -85,6 +87,11 @@ public class CatiFragment extends AbsRecyclerViewFragment implements
         R.drawable.ic_dialpad_black_24dp,
         -1
     };
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
   }
 
   /**

@@ -118,7 +118,6 @@ public class MainActivity extends AbsSearchBarActivity {
     if (isDefaultDialer) checkPermissions(null);
 
     Intent serviceIntent = new Intent(this, BLECommsService.class);
-    serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
     ContextCompat.startForegroundService(this, serviceIntent);
 
     //adding some filters
@@ -408,7 +407,7 @@ public class MainActivity extends AbsSearchBarActivity {
             Utilities.checkPermissionsGranted(this, Utilities.MUST_HAVE_PERMISSIONS)) { //If granted
       checkVersion();
     } else {
-//            Utilities.askForPermissions(this, Utilities.MUST_HAVE_PERMISSIONS);
+            Utilities.askForPermissions(this, Utilities.MUST_HAVE_PERMISSIONS);
     }
   }
 

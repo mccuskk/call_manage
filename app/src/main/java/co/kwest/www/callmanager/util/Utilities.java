@@ -41,16 +41,20 @@ import java.util.Locale;
 import co.kwest.www.callmanager.database.entity.RecentCall;
 import timber.log.Timber;
 
+import static android.Manifest.permission.BLUETOOTH;
+import static android.Manifest.permission.BLUETOOTH_ADMIN;
 import static android.Manifest.permission.CALL_PHONE;
+import static android.Manifest.permission.FOREGROUND_SERVICE;
 import static android.Manifest.permission.READ_CALL_LOG;
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.SEND_SMS;
 
 public class Utilities {
 
     public static final int DEFAULT_DIALER_RC = 11;
     public static final int PERMISSION_RC = 10;
-    public static final String[] MUST_HAVE_PERMISSIONS = {CALL_PHONE, READ_CONTACTS, READ_CALL_LOG};
+    public static final String[] MUST_HAVE_PERMISSIONS = {CALL_PHONE, READ_CONTACTS, READ_CALL_LOG, FOREGROUND_SERVICE, READ_PHONE_STATE, BLUETOOTH, BLUETOOTH_ADMIN};
     public static final String[] OPTIONAL_PERMISSIONS = {SEND_SMS};
 
     public static Locale sLocale;
