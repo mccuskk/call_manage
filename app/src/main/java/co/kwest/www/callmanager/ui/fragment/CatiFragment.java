@@ -1,5 +1,6 @@
 package co.kwest.www.callmanager.ui.fragment;
 
+import android.bluetooth.BluetoothAdapter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -57,7 +58,7 @@ public class CatiFragment extends AbsRecyclerViewFragment implements
     mAdapter = new CatiAdapter(getContext(), this);
     mRecyclerView.setAdapter(mAdapter);
 
-    mSerialNo.setText(Build.getSerial());
+    mSerialNo.setText(BluetoothAdapter.getDefaultAdapter().getName());
   }
 
   @Override

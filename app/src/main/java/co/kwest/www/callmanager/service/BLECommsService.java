@@ -46,6 +46,7 @@ public class BLECommsService extends Service {
   public static final String CHANNEL_ID = "ForegroundServiceChannel";
 
   BroadcastReceiver answeredReceiver;
+  BroadcastReceiver disconnectedReceiver;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -243,19 +244,28 @@ public class BLECommsService extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
-    final IntentFilter intentFilter = new IntentFilter();
+    final IntentFilter answeredFilter = new IntentFilter();
     //adding some filters
-    intentFilter.addAction("co.kwest.www.callmanager.answered");
+    answeredFilter.addAction("co.kwest.www.callmanager.answered");
     this.answeredReceiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
-        //update the count and show it in the notification body
-        //used only to see if the receiver works
-        String action = intent.getAction();
+        // Signal the call has been answered
         notifyAnswered();
       }
     };
-    registerReceiver(answeredReceiver, intentFilter);
+    registerReceiver(answeredReceiver, answeredFilter);
+
+    final IntentFilter disconnectedFilter = new IntentFilter();
+    disconnectedFilter.addAction("co.kwest.www.callmanager.disconnected");
+    this.disconnectedReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        // Signal the call has been disconnected
+        notifyDisconnected();
+      }
+    };
+    registerReceiver(disconnectedReceiver, disconnectedFilter);
   }
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
@@ -281,6 +291,7 @@ public class BLECommsService extends Service {
   public void onDestroy() {
     super.onDestroy();
     unregisterReceiver(answeredReceiver);
+    unregisterReceiver(disconnectedReceiver);
     disconnectFromDevices();
   }
   @Nullable
@@ -371,6 +382,16 @@ public class BLECommsService extends Service {
 
   public void notifyAnswered() {
     mCallAnsweredControlPoint.setValue(CallManager.called);
+    for (BluetoothDevice device : mBluetoothDevices) {
+      // true for indication (acknowledge) and false for notification (unacknowledge).
+      boolean rc = mGattServer.notifyCharacteristicChanged(device, mCallAnsweredControlPoint, false);
+      Timber.tag(TAG).w(String.format("notifyAnswered: %s %b", CallManager.called, rc));
+
+    }
+  }
+
+  public void notifyDisconnected() {
+    mCallAnsweredControlPoint.setValue("disconnected");
     for (BluetoothDevice device : mBluetoothDevices) {
       // true for indication (acknowledge) and false for notification (unacknowledge).
       boolean rc = mGattServer.notifyCharacteristicChanged(device, mCallAnsweredControlPoint, false);

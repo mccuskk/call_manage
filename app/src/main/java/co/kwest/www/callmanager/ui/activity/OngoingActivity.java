@@ -224,15 +224,18 @@ public class OngoingActivity extends AbsThemeActivity implements DialpadFragment
    */
   private void updateUI(int state) {
     @StringRes int statusTextRes;
+    Intent intent = new Intent();
+
     switch (state) {
       case Call.STATE_ACTIVE: // Ongoing
         statusTextRes = R.string.status_call_active;
-        Intent intent = new Intent();
         intent.setAction("co.kwest.www.callmanager.answered");
         sendBroadcast(intent);
         break;
       case Call.STATE_DISCONNECTED: // Ended
         statusTextRes = R.string.status_call_disconnected;
+        intent.setAction("co.kwest.www.callmanager.disconnected");
+        sendBroadcast(intent);
         break;
       case Call.STATE_RINGING: // Incoming
         statusTextRes = R.string.status_call_incoming;
