@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CATI Dialer</string>
+    <string name="app_name">CATI Dialer v2</string>
     <string name="support_email">kieran.mccusker@gmail.com</string>
     <string name="app_source_url">https://github.com/Chooloo/call_manage</string>
     <string name="app_bug_reporting_url">https://github.com/Chooloo/call_manage/issues</string>
@@ -156,7 +156,7 @@
     <string name="password_message">Log in with your password</string>
 
     <!-- Notification -->
-    <string name="active_call_notification_text">Is calling...</string>
+    <string name="active_call_notification_text">Is calling…</string>
     <string name="channel_name">notification</string>
     <string name="channel_description">On Going Call</string>
     <string name="action_answer">Answer</string>
